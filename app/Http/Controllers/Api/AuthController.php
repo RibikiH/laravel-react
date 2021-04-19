@@ -38,12 +38,6 @@ class AuthController extends Controller
             'password' => 'required|min:4',
         ]);
 
-        if (!empty($request->check)) {
-            return response()->json([
-                'status' => 'OK'
-            ]);
-        }
-
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],

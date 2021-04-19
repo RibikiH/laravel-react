@@ -2,7 +2,7 @@ import React from "react"
 import {useSelector} from "react-redux";
 import {RootState} from "../helper/store";
 
-export default () => {
+export const Header = () => {
     const menuName = useSelector((state: RootState) => state.system.menu_name);
 
     return (

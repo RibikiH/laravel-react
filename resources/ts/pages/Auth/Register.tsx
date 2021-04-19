@@ -13,6 +13,10 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         userActions.register(dispatch, name, email, password)
+            .then(() => setLoading(false))
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     return (

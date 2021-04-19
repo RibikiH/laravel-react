@@ -3,8 +3,7 @@ import { Transition } from '@headlessui/react';
 import {userActions} from "../actions";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../helper/store";
-import {commonConstants} from "../constants";
-import { useHistory } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 export const Nav = () => {
     const [isOpen, setOpen] = useState(false);
@@ -12,7 +11,6 @@ export const Nav = () => {
     const dispatch = useDispatch();
     const wrapperRef = useRef<HTMLDivElement>(null);
     const menu = useSelector((state :RootState) => state.system.menu);
-    const history = useHistory();
 
     useEffect(() => {
         function handleClickOutside(event: { target: any; }) {
@@ -35,11 +33,6 @@ export const Nav = () => {
     const normalMenu = "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium";
     const activeMenu = "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium";
 
-    const changeMenu = (e: React.MouseEvent<HTMLAnchorElement>, menu: string) => {
-        e.preventDefault();
-        history.push('/' + menu);
-    }
-
     return (
         <nav className="bg-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,10 +43,8 @@ export const Nav = () => {
                         </div>
                         <div className="hidden md:block">
                             <div className="ml-10 flex items-baseline space-x-4">
-                                <a href="/" onClick={(e) => changeMenu(e, 'dashboard')}
-                                   className={ menu === 'dashboard' ? activeMenu : normalMenu }>Dashboard</a>
-                                <a href="/user" onClick={(e) => changeMenu(e, 'user')}
-                                   className={ menu === 'user' ? activeMenu : normalMenu }>Users</a>
+                                <Link to="/" className={ menu === 'dashboard' ? activeMenu : normalMenu }>Dashboard</Link>
+                                <Link to="/user" className={ menu === 'user' ? activeMenu : normalMenu }>Users</Link>
                             </div>
                         </div>
                     </div>

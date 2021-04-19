@@ -9875,7 +9875,7 @@ var login = function login(dispatch, email, password) {
   dispatch({
     type: constants_1.commonConstants.START_PROGRESS
   });
-  services_1.userService.login(email, password).then(function (user) {
+  return services_1.userService.login(email, password).then(function (user) {
     dispatch(success(user));
     history_1.history.push('/');
   }, function (error) {
@@ -9910,11 +9910,12 @@ var register = function register(dispatch, name, email, password) {
     email: email,
     password: password
   }));
-  services_1.userService.register(name, email, password).then(function (user) {
+  return services_1.userService.register(name, email, password).then(function (user) {
     dispatch(success(user));
     history_1.history.push('/login');
-  }, function (error) {
-    dispatch(failure(error.toString()));
+  })["catch"](function (error) {
+    console.log(error.message);
+    return Promise.reject(error);
   });
 
   function request(user) {
@@ -10019,12 +10020,13 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
+exports.Header = void 0;
 
 var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
 var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 
-exports.default = function () {
+var Header = function Header() {
   var menuName = react_redux_1.useSelector(function (state) {
     return state.system.menu_name;
   });
@@ -10036,6 +10038,8 @@ exports.default = function () {
     className: "text-3xl font-bold text-gray-900"
   }, menuName)));
 };
+
+exports.Header = Header;
 
 /***/ }),
 
@@ -10111,7 +10115,6 @@ var Nav = function Nav() {
   var menu = react_redux_1.useSelector(function (state) {
     return state.system.menu;
   });
-  var history = react_router_dom_1.useHistory();
   react_1.useEffect(function () {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
@@ -10132,12 +10135,6 @@ var Nav = function Nav() {
 
   var normalMenu = "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium";
   var activeMenu = "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium";
-
-  var changeMenu = function changeMenu(e, menu) {
-    e.preventDefault();
-    history.push('/' + menu);
-  };
-
   return react_1["default"].createElement("nav", {
     className: "bg-gray-800"
   }, react_1["default"].createElement("div", {
@@ -10156,17 +10153,11 @@ var Nav = function Nav() {
     className: "hidden md:block"
   }, react_1["default"].createElement("div", {
     className: "ml-10 flex items-baseline space-x-4"
-  }, react_1["default"].createElement("a", {
-    href: "/",
-    onClick: function onClick(e) {
-      return changeMenu(e, 'dashboard');
-    },
+  }, react_1["default"].createElement(react_router_dom_1.Link, {
+    to: "/",
     className: menu === 'dashboard' ? activeMenu : normalMenu
-  }, "Dashboard"), react_1["default"].createElement("a", {
-    href: "/user",
-    onClick: function onClick(e) {
-      return changeMenu(e, 'user');
-    },
+  }, "Dashboard"), react_1["default"].createElement(react_router_dom_1.Link, {
+    to: "/user",
     className: menu === 'user' ? activeMenu : normalMenu
   }, "Users")))), react_1["default"].createElement("div", {
     className: "hidden md:block"
@@ -10452,6 +10443,10 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 
 __exportStar(__webpack_require__(/*! ./PrivateRoute */ "./resources/ts/components/PrivateRoute.tsx"), exports);
+
+__exportStar(__webpack_require__(/*! ./Nav */ "./resources/ts/components/Nav.tsx"), exports);
+
+__exportStar(__webpack_require__(/*! ./Header */ "./resources/ts/components/Header.tsx"), exports);
 
 /***/ }),
 
@@ -10959,7 +10954,11 @@ var Register = function Register() {
   var handleSubmit = function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    actions_1.userActions.register(dispatch, name, email, password);
+    actions_1.userActions.register(dispatch, name, email, password).then(function () {
+      return setLoading(false);
+    })["catch"](function (error) {
+      console.log(error);
+    });
   };
 
   return react_1["default"].createElement("div", {
@@ -11069,34 +11068,64 @@ exports.default = Register;
 "use strict";
 
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
 };
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var Nav_1 = __webpack_require__(/*! ../../components/Nav */ "./resources/ts/components/Nav.tsx");
+var components_1 = __webpack_require__(/*! ../../components */ "./resources/ts/components/index.tsx");
 
 var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 
 var constants_1 = __webpack_require__(/*! ../../constants */ "./resources/ts/constants/index.tsx");
 
-var Header_1 = __importDefault(__webpack_require__(/*! ../../components/Header */ "./resources/ts/components/Header.tsx"));
+var components_2 = __webpack_require__(/*! ../../components */ "./resources/ts/components/index.tsx");
 
 exports.default = function () {
   var dispatch = react_redux_1.useDispatch();
-  dispatch({
-    type: constants_1.commonConstants.SET_MENU,
-    menu: 'dashboard',
-    menu_name: 'Dashboard'
+  react_1.useEffect(function () {
+    dispatch({
+      type: constants_1.commonConstants.SET_MENU,
+      menu: 'dashboard',
+      menu_name: 'Dashboard'
+    });
   });
-  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(Nav_1.Nav, null), react_1["default"].createElement(Header_1["default"], null), react_1["default"].createElement("main", null, react_1["default"].createElement("div", {
+  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(components_1.Nav, null), react_1["default"].createElement(components_2.Header, null), react_1["default"].createElement("main", null, react_1["default"].createElement("div", {
     className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
   }, react_1["default"].createElement("div", {
     className: "px-4 py-6 sm:px-0"
@@ -11160,25 +11189,26 @@ Object.defineProperty(exports, "__esModule", ({
 
 var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var Nav_1 = __webpack_require__(/*! ../../components/Nav */ "./resources/ts/components/Nav.tsx");
+var components_1 = __webpack_require__(/*! ../../components */ "./resources/ts/components/index.tsx");
 
 var react_redux_1 = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
 
 var constants_1 = __webpack_require__(/*! ../../constants */ "./resources/ts/constants/index.tsx");
 
-var Header_1 = __importDefault(__webpack_require__(/*! ../../components/Header */ "./resources/ts/components/Header.tsx"));
+var components_2 = __webpack_require__(/*! ../../components */ "./resources/ts/components/index.tsx");
 
 var react_avatar_1 = __importDefault(__webpack_require__(/*! react-avatar */ "./node_modules/react-avatar/es/index.js"));
 
 exports.default = function () {
   var dispatch = react_redux_1.useDispatch();
-  dispatch({
-    type: constants_1.commonConstants.SET_MENU,
-    menu: 'user',
-    menu_name: 'Users'
+  react_1.useEffect(function () {
+    dispatch({
+      type: constants_1.commonConstants.SET_MENU,
+      menu: 'user',
+      menu_name: 'Users'
+    });
   });
-  react_1.useEffect(function () {});
-  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(Nav_1.Nav, null), react_1["default"].createElement(Header_1["default"], null), react_1["default"].createElement("main", null, react_1["default"].createElement("div", {
+  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(components_1.Nav, null), react_1["default"].createElement(components_2.Header, null), react_1["default"].createElement("main", null, react_1["default"].createElement("div", {
     className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
   }, react_1["default"].createElement("div", {
     className: "px-4 py-6 sm:px-0"
@@ -11651,7 +11681,8 @@ var register = function register(name, email, password) {
   var requestOptions = {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     },
     body: JSON.stringify({
       name: name,

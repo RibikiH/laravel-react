@@ -5,7 +5,7 @@ import { history } from "../helper/history";
 const login = (dispatch: (arg0: any) => void, email: string, password: string) => {
     dispatch(request({ email }))
     dispatch({ type: commonConstants.START_PROGRESS })
-    userService.login(email, password)
+    return userService.login(email, password)
         .then(
             user => {
                 dispatch(success(user));
@@ -25,16 +25,16 @@ const login = (dispatch: (arg0: any) => void, email: string, password: string) =
 
 const register = (dispatch: (arg0: { type: string; user?: any; error?: any; }) => void, name: string, email: string, password: string) => {
     dispatch(request({name, email, password}))
-    userService.register(name, email, password)
+    return userService.register(name, email, password)
         .then(
             user => {
                 dispatch(success(user));
                 history.push('/login');
-            },
-            error => {
-                dispatch(failure(error.toString()));
             }
-        );
+        ).catch(error => {
+            console.log(error.message);
+            return Promise.reject(error);
+        });
 
     function request(user: { password: string; name: string; email: string }) { return { type: userConstants.REGISTER_REQUEST, user } }
     function success(user: any) { return { type: userConstants.REGISTER_SUCCESS, user } }
