@@ -32,7 +32,6 @@ const register = (dispatch: (arg0: { type: string; user?: any; error?: any; }) =
                 history.push('/login');
             }
         ).catch(error => {
-            console.log(error.message);
             return Promise.reject(error);
         });
 

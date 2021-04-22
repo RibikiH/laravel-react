@@ -70,8 +70,7 @@ function handleResponse(response: { text: () => Promise<any>; ok: any; status: n
                 location.reload(true);
             }
 
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
+            return Promise.reject(data);
         }
 
         return data;

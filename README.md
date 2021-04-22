@@ -9,6 +9,9 @@ You can install this project with composer and yarn
 ``` bash
 $ composer install
 $ yarn install
+$ cp .env.example .env
+$ php artisan key:generate
+$ php artisan jwt:secret
 ```
 
 ## Build
