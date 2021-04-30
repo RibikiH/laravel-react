@@ -10,7 +10,7 @@ export function users(state = {
             };
         case userConstants.GET_ALL_SUCCESS:
             return {
-                items: action.users
+                items: action.users.data
             };
         case userConstants.GET_ALL_FAILURE:
             return {

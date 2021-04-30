@@ -15,6 +15,7 @@ import Register from '../pages/Auth/Register';
 
 // users
 import UserIndex from "./Users/UserIndex";
+import UserEdit from "./Users/UserEdit";
 
 const App = () => {
     const ref = useRef(null);
@@ -34,6 +35,7 @@ const App = () => {
                 <Route exact path="/login" component={Login}/>
                 <Route exact path="/register" component={Register}/>
                 <PrivateRoute exact path="/user" component={UserIndex}/>
+                <PrivateRoute exact path="/user/:id/edit" component={UserEdit}/>
                 <Redirect from="*" to="/"/>
             </Switch>
         </Router>

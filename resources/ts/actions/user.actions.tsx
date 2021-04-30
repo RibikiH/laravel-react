@@ -32,6 +32,7 @@ const register = (dispatch: (arg0: { type: string; user?: any; error?: any; }) =
                 history.push('/login');
             }
         ).catch(error => {
+            dispatch(failure(error));
             return Promise.reject(error);
         });
 
@@ -54,14 +55,36 @@ const logout = (dispatch: (arg0: any) => void) => {
 }
 
 const getAll = (dispatch: (arg0: any) => void) => {
-    userService.getAll()
-        .then(() => {
+    dispatch(request());
+    return userService.getAll()
+        .then(
+            users => dispatch(success(users)),
+            error => dispatch(failure(error.toString()))
+        )
 
-        })
+    function request() { return { type: userConstants.GET_ALL_REQUEST } }
+    function success(users: any) { return { type: userConstants.GET_ALL_SUCCESS, users } }
+    function failure(error: string) { return { type: userConstants.GET_ALL_FAILURE, error } }
+}
+
+const getUser = (dispatch: (arg0: any) => void, id: bigint) => {
+    dispatch(request());
+
+    return userService.getUser(id)
+        .then(
+            user => dispatch(success(user)),
+            error => dispatch(failure(error.toString()))
+        )
+
+    function request() { return { type: userConstants.GET_USER_REQUEST } }
+    function success(user: any) { return { type: userConstants.GET_USER_SUCCESS, user } }
+    function failure(error: string) { return { type: userConstants.GET_USER_FAILURE, error } }
 }
 
 export const userActions = {
     login,
     register,
     logout,
+    getAll,
+    getUser,
 };

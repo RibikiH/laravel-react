@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,10 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::namespace('Api')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
@@ -27,6 +24,5 @@ Route::namespace('Api')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::post('account/change-information', [AuthController::class, 'changeInformation']);
-    Route::post('account/change-password', [AuthController::class, 'changePassword']);
+    Route::apiResource('user', UserController::class);
 });

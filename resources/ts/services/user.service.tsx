@@ -55,9 +55,18 @@ const getAll = () => {
         headers: authHeader()
     };
 
-    return fetch(`${base}/api/users`, requestOptions)
-        .then(handleResponse)
-        .then(() => localStorage.removeItem('user'));
+    return fetch(`${base}/api/user`, requestOptions)
+        .then(handleResponse);
+}
+
+const getUser = (id: bigint) => {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${base}/api/user/${id}`, requestOptions)
+        .then(handleResponse);
 }
 
 function handleResponse(response: { text: () => Promise<any>; ok: any; status: number; statusText: any; }) {
@@ -82,4 +91,5 @@ export const userService = {
     register,
     logout,
     getAll,
+    getUser,
 };
